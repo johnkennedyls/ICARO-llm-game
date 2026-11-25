@@ -12,6 +12,9 @@ from ..graph import Coord
 
 
 class RendererBase:
+    # Factor de escala global para fuentes (1.0 = original, 1.3 = 30% más grande)
+    FONT_SCALE = 1.3
+
     def __init__(self, canvas: pygame.Surface) -> None:
         self.canvas = canvas
         self.width, self.height = canvas.get_size()
@@ -76,7 +79,8 @@ class RendererBase:
     # Fuentes y texto
     # ------------------------------------------------------------------
     def font(self, size: int, bold: bool = False, mono: bool = False) -> pygame.font.Font:
-        key = (size, bold, mono)
+        scaled_size = max(8, int(size * self.FONT_SCALE))
+        key = (scaled_size, bold, mono)
         cached = self._fonts.get(key)
         if cached is None:
             names = (
@@ -84,7 +88,7 @@ class RendererBase:
                 if mono else
                 "segoeui,verdana,dejavusans,arial"
             )
-            cached = pygame.font.SysFont(names, size, bold=bold)
+            cached = pygame.font.SysFont(names, scaled_size, bold=bold)
             self._fonts[key] = cached
         return cached
 

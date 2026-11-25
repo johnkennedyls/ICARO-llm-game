@@ -44,7 +44,7 @@ HAZARD_ENERGY_PENALTY = 4.0        # coste extra al pisar vapor/riesgo
 PLAYER_STEP_TIME = 0.125           # segundos por baldosa
 PLAYER_VISION = 7.4                # radio de visión (baldosas)
 TERMINAL_ENERGY_COST = 5.0
-TERMINAL_RANGE = 1.25
+TERMINAL_RANGE = 1.5
 
 # ---------------------------------------------------------------------------
 # ARGOS (cazador)
