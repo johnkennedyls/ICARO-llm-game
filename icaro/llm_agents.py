@@ -66,6 +66,13 @@ class LLMConfig:
 
     @classmethod
     def from_env(cls) -> "LLMConfig":
+        # Load .env file if exists
+        try:
+            from dotenv import load_dotenv
+            load_dotenv()
+        except ImportError:
+            pass
+
         provider_str = os.getenv("LLM_PROVIDER", "mock").lower()
         try:
             provider = LLMProviderType(provider_str)
@@ -950,18 +957,18 @@ class OperatorAgent(LLMAgentBase):
                 "energy": round(player.energy, 1),
                 "cards": len(player.cards),
                 "max_cards": config.CARD_COUNT,
-                "position": player.tile,
+                "position": f"{player.tile[0]},{player.tile[1]}",
                 "step_timer": round(player.step_timer, 2),
             },
             "objectives": {
                 "remaining_cards": len(game.remaining_cards),
                 "exit_active": game.exit_active,
-                "exit_position": game.maze.exit if game.exit_active or len(player.cards) > 0 else "unknown",
+                "exit_position": f"{game.maze.exit[0]},{game.maze.exit[1]}" if game.exit_active or len(player.cards) > 0 else "unknown",
             },
             "argos": {
                 "visible": argos.player_visible,
                 "state": argos.state,
-                "position": argos.tile if argos.player_visible or game.reveal_active else "unknown",
+                "position": f"{argos.tile[0]},{argos.tile[1]}" if argos.player_visible or game.reveal_active else "unknown",
                 "distance": abs(argos.tile[0] - player.tile[0]) + abs(argos.tile[1] - player.tile[1]) if argos.player_visible else "unknown",
             },
             "security": round(game.security, 1),
@@ -1059,35 +1066,35 @@ class AnalystAgent(LLMAgentBase):
             "time": round(game.time, 1),
             "security": round(game.security, 1),
             "argos": {
-                "position": argos.tile,
+                "position": f"{argos.tile[0]},{argos.tile[1]}",
                 "state": argos.state,
                 "target": argos.target_label,
                 "path_len": len(argos.path),
-                "goal": argos.goal,
+                "goal": f"{argos.goal[0]},{argos.goal[1]}" if argos.goal else None,
                 "prediction": {
-                    "target": argos.prediction.target if argos.prediction else None,
-                    "probable": argos.prediction.probable if argos.prediction else None,
+                    "target": f"{argos.prediction.target[0]},{argos.prediction.target[1]}" if argos.prediction and argos.prediction.target else None,
+                    "probable": f"{argos.prediction.probable[0]},{argos.prediction.probable[1]}" if argos.prediction and argos.prediction.probable else None,
                     "rationale": argos.prediction.rationale if argos.prediction else None,
                 } if argos.prediction else None,
                 "player_visible": argos.player_visible,
-                "last_seen": argos.last_seen,
+                "last_seen": f"{argos.last_seen[0]},{argos.last_seen[1]}" if argos.last_seen else None,
                 "lock_ready_in": max(0, argos.lock_ready_at - game.time),
-                "heat_top5": dict(argos.heat.most_common(5)),
-                "crossings": list(argos.crossings),
+                "heat_top5": {f"{k[0]},{k[1]}": v for k, v in argos.heat.most_common(5)},
+                "crossings": [f"{c[0]},{c[1]}" for c in argos.crossings],
             },
             "player": {
-                "position": player.tile,
+                "position": f"{player.tile[0]},{player.tile[1]}",
                 "energy": round(player.energy, 1),
                 "cards": len(player.cards),
-                "objectives": [list(game.remaining_cards), game.maze.exit] if game.remaining_cards else [game.maze.exit],
+                "objectives": [[f"{c[0]},{c[1]}" for c in game.remaining_cards], f"{game.maze.exit[0]},{game.maze.exit[1]}"] if game.remaining_cards else [f"{game.maze.exit[0]},{game.maze.exit[1]}"],
                 "autopilot": game.autopilot,
             },
             "drones": [
                 {
                     "name": d.name,
-                    "position": d.tile,
+                    "position": f"{d.tile[0]},{d.tile[1]}",
                     "state": d.state,
-                    "waypoint": d.route[d.route_index % len(d.route)] if d.route else None,
+                    "waypoint": f"{d.route[d.route_index % len(d.route)][0]},{d.route[d.route_index % len(d.route)][1]}" if d.route else None,
                     "last_report": round(game.time - d.last_report_at, 1) if d.last_report_at > -900 else None,
                 }
                 for d in game.drones
@@ -1095,13 +1102,13 @@ class AnalystAgent(LLMAgentBase):
             "map": {
                 "width": maze.width,
                 "height": maze.height,
-                "doors": list(maze.doors),
-                "locked_doors": list(maze.locked_doors.keys()),
-                "sensors": list(maze.sensors),
-                "terminals": list(maze.terminals),
-                "hazards": list(maze.hazards),
-                "cards": list(maze.cards),
-                "exit": maze.exit,
+                "doors": [f"{d[0]},{d[1]}" for d in maze.doors],
+                "locked_doors": [f"{d[0]},{d[1]}" for d in maze.locked_doors.keys()],
+                "sensors": [f"{s[0]},{s[1]}" for s in maze.sensors],
+                "terminals": [f"{t[0]},{t[1]}" for t in maze.terminals],
+                "hazards": [f"{h[0]},{h[1]}" for h in maze.hazards],
+                "cards": [f"{c[0]},{c[1]}" for c in maze.cards],
+                "exit": f"{maze.exit[0]},{maze.exit[1]}",
             },
         }
         return json.dumps(ctx, ensure_ascii=False)
