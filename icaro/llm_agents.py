@@ -546,7 +546,12 @@ class AnthropicProvider(LLMProvider):
 
 
 class OllamaProvider(LLMProvider):
-    """Proveedor Ollama (modelos locales: Llama 3, Qwen, etc.)."""
+    """Proveedor Ollama (modelos locales: Llama 3, Qwen, etc.).
+
+    Nota: La mayoría de modelos locales NO soportan function calling nativo.
+    Este proveedor usa solo el contenido de la respuesta (sin tools).
+    Para agents que necesitan tools, usar OpenAI/Anthropic o MockProvider.
+    """
 
     def __init__(self, config: LLMConfig):
         super().__init__(config)
@@ -555,8 +560,7 @@ class OllamaProvider(LLMProvider):
     def complete(self, messages, tools=None, model=None, **kwargs) -> LLMResponse:
         try:
             import requests
-            # Ollama no nativamente soporta tools; usar prompt engineering
-            prompt = self._build_prompt(messages, tools)
+            prompt = self._build_prompt(messages)  # Sin tools
             start = time.perf_counter()
             response = requests.post(
                 f"{self.base_url}/api/generate",
@@ -573,11 +577,10 @@ class OllamaProvider(LLMProvider):
             latency = (time.perf_counter() - start) * 1000
             data = response.json()
             content = data.get("response", "")
-            tool_calls = self._parse_tool_calls(content)
             return LLMResponse(
                 content=content,
-                tool_calls=tool_calls,
-                usage={},  # Ollama no devuelve tokens facilmente
+                tool_calls=[],  # Sin tools para modelos locales
+                usage={},
                 latency_ms=latency,
                 raw=data,
             )
@@ -585,10 +588,9 @@ class OllamaProvider(LLMProvider):
             return LLMResponse(content="", error=str(e))
 
     async def acomplete(self, messages, tools=None, model=None, **kwargs) -> LLMResponse:
-        # Ollama async requiere aiohttp; fallback a sync por simplicidad
         return self.complete(messages, tools, model, **kwargs)
 
-    def _build_prompt(self, messages, tools) -> str:
+    def _build_prompt(self, messages) -> str:
         parts = []
         for m in messages:
             role = m["role"]
@@ -599,22 +601,7 @@ class OllamaProvider(LLMProvider):
                 parts.append(f"USER: {content}")
             elif role == "assistant":
                 parts.append(f"ASSISTANT: {content}")
-        if tools:
-            parts.append("TOOLS: " + json.dumps(tools, ensure_ascii=False))
-            parts.append("Responde en formato JSON con 'tool_calls' si usas herramientas.")
         return "\n\n".join(parts)
-
-    def _parse_tool_calls(self, content: str) -> list[dict]:
-        # Intentar extraer JSON de tool_calls del contenido
-        try:
-            import re
-            match = re.search(r'\{.*"tool_calls".*\}', content, re.DOTALL)
-            if match:
-                data = json.loads(match.group())
-                return data.get("tool_calls", [])
-        except Exception:
-            pass
-        return []
 
 
 def create_provider(config: LLMConfig) -> LLMProvider:
