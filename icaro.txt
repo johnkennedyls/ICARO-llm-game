@@ -1,0 +1,62 @@
+FUNDACIÓN UNIVERSITARIA DE POPAYÁN  /  ALGORITMOS COMPUTACIONALES
+Proyecto final · Aprendizaje basado en retos
+1
+STORYBOARD · LABERINTO DE SUPERVIVENCIA
+El escape de Ícaro
+01 / Historia y ambientación
+Ícaro despierta en una estación subterránea cuyo sistema de seguridad ha perdido el control. Una
+compuerta de emergencia es su única salida, pero requiere tres tarjetas dispersas. El guardián ARGOS
+registra sus movimientos y modifica sus rutas para interceptarlo.
+Personajes y roles
+Ícaro (jugador), ARGOS (cazador), drones exploradores y terminales de seguridad.
+Objetivo y desenlace
+Recoger tres tarjetas y llegar a la salida antes de agotar la energía; perder si ARGOS captura a Ícaro o
+se agota el tiempo.
+Experiencia de juego
+Prototipo 2D de vista cenital o equivalente. El equipo define controles, estética y duración. El jugador
+debe poder observar consecuencias de las decisiones autónomas; no se exige arte comercial.
+
+FUNDACIÓN UNIVERSITARIA DE POPAYÁN  /  ALGORITMOS COMPUTACIONALES
+Proyecto final · Aprendizaje basado en retos
+2
+02 / Storyboard narrativo y funcional
+Escena 1 · Despertar
+Encuadre y acción: Plano cenital de la celda; tutorial de movimiento y primer indicio del guardián.
+Comportamiento inteligente: ARGOS patrulla; el jugador observa su campo de visión.
+Escena 2 · Primer contacto
+Encuadre y acción: Corredores y tarjeta inicial; aparece una alarma al cruzar un sensor.
+Comportamiento inteligente: ARGOS investiga la última posición conocida mediante A*.
+Escena 3 · El laberinto cambia
+Encuadre y acción: Una puerta se bloquea y obliga a buscar otro corredor.
+Comportamiento inteligente: El guardián recalcula rutas y memoriza cruces frecuentes.
+Escena 4 · La cacería
+Encuadre y acción: Dos drones exploran sectores mientras Ícaro busca la última tarjeta.
+Comportamiento inteligente: Los agentes comparten observaciones y estiman posibles salidas.
+Escena 5 · La fuga
+Encuadre y acción: La salida se activa; el jugador debe escoger una ruta final.
+Comportamiento inteligente: ARGOS prioriza interceptar o perseguir según costos y memoria.
+
+FUNDACIÓN UNIVERSITARIA DE POPAYÁN  /  ALGORITMOS COMPUTACIONALES
+Proyecto final · Aprendizaje basado en retos
+3
+03 / Diseño de inteligencia
+Percepción: observaciones locales y eventos autorizados por las reglas. Memoria: historial de
+evidencias, objetivos y resultados. Planificación: generación de rutas y alternativas. Decisión: selección
+de acción por objetivos y restricciones. Ejecución: acciones válidas en el motor. Evaluación:
+actualización del estado y replanificación.
+Usar memoria de cruces visitados para estimar una intercepción; comparar persecución directa con
+anticipación. Recursividad: explorar un árbol acotado de posibles movimientos futuros.
+Requisitos comunes
+Implementar Dijkstra y A* sobre el mismo grafo de costos no negativos; justificar una heurística
+admisible para comparar optimalidad. Incorporar un procedimiento recursivo con caso base y límite o
+condición de terminación. Analizar complejidad temporal y espacial. Mostrar en un panel estado,
+objetivo, ruta, algoritmo, costo, nodos expandidos y duración de búsqueda.
+Prueba de aceptación
+Bloquear el corredor de menor costo durante una persecución y verificar que el agente encuentre una
+alternativa válida.
+Ejecutar ambos algoritmos sobre escenarios equivalentes con semillas registradas y varios tamaños de
+mapa. Entregar métricas reales, código reproducible y una demostración del cambio de comportamiento.
+Libertad de desarrollo
+Se permite IA generativa y programación agéntica durante todo el proceso. Un modelo de lenguaje
+dentro del juego es opcional. La historia, nombres, diseño visual y umbrales pueden adaptarse sin
+eliminar los requisitos algorítmicos.

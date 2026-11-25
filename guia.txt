@@ -1,0 +1,76 @@
+FUNDACIÓN UNIVERSITARIA DE POPAYÁN / ALGORITMOS COMPUTACIONALES
+1
+GUÍA GENERAL · PROYECTO FINAL
+Videojuegos con inteligencia artificial
+agéntica
+1 / Presentación
+Diseñar e implementar un videojuego interactivo cuyos personajes autónomos perciban su entorno,
+planifiquen, tomen decisiones, ejecuten acciones y adapten su comportamiento. Se permite utilizar
+libremente herramientas de IA generativa y programación agéntica durante todo el desarrollo. Se
+evalúa el diseño, implementación y validación de soluciones algorítmicas, no la escritura manual del
+código.
+2 / Objetivo general
+Desarrollar un videojuego que integre algoritmos computacionales y arquitecturas de agentes
+inteligentes autónomos para resolver problemas de navegación, planificación, optimización y toma
+de decisiones en entornos dinámicos.
+3 / Proyectos
+1. El escape de Ícaro: laberinto y persecución inteligente.
+2. El último refugio: apocalipsis zombi y coordinación.
+3. Operación Renacer: rescate y priorización.
+4. Arena Omega: competencia entre robots.
+5. Protocolo Sombra: infiltración y vigilancia.
+6. Proyecto Génesis: colonización y organización colectiva.
+
+FUNDACIÓN UNIVERSITARIA DE POPAYÁN / ALGORITMOS COMPUTACIONALES
+2
+4 / Arquitectura de agentes
+Entorno → percepción → memoria y contexto → planificación → decisión → ejecución →
+evaluación → actualización del entorno y la memoria. El agente debe reconsiderar sus planes ante
+cambios. La autonomía no exige aprendizaje automático ni modelos de lenguaje; sí decisiones
+observables orientadas a objetivos.
+5 / Requerimientos algorítmicos
+Dijkstra: camino de costo mínimo con pesos no negativos. A*: búsqueda guiada por f(n)=g(n)+h(n);
+justificar admisibilidad y consistencia o reapertura de nodos. Grafos: definir vértices, aristas y
+costos. Recursividad: caso base, progreso y análisis de pila. Heurísticas: estimar costos o priorizar
+opciones. Memoria y autonomía: registrar eventos y tomar decisiones. Comunicación multiagente
+cuando corresponda.
+Complejidad: expresar costos en función de vértices, aristas, profundidad y factor de ramificación
+según la implementación. Dijkstra con lista de adyacencia y montículo binario admite O((V+E) log V)
+de tiempo; A* no garantiza menor tiempo en todos los escenarios. Explicar el espacio de las
+estructuras y de la recursión.
+6 / Panel de monitoreo
+Visualizar objetivo, estado, percepción relevante, ruta, algoritmo, heurística, costo, nodos
+expandidos y tiempo de ejecución. Registrar cambios de plan y mensajes entre agentes. Comparar
+Dijkstra y A* con datos reales del videojuego.
+
+FUNDACIÓN UNIVERSITARIA DE POPAYÁN / ALGORITMOS COMPUTACIONALES
+3
+7 / Herramientas y experimentación
+Python/Pygame, JavaScript, Godot, Unity u otras tecnologías a elección del equipo. Claude Code,
+Codex, Cursor y otros asistentes son permitidos. Integrar un modelo de lenguaje dentro del juego es
+opcional. Validar sus acciones contra las reglas y separar su latencia del tiempo de búsqueda.
+Comparar algoritmos con iguales mapas, orígenes, destinos y costos; usar varios tamaños y al
+menos cinco repeticiones por condición como propuesta mínima. Registrar equipo, semilla, tiempos,
+costo de ruta, nodos expandidos y memoria si es medible. Probar cambios del entorno.
+8 / Entregables
+Videojuego funcional e instrucciones de ejecución; repositorio de código fuente; documentación de
+agentes, grafos, heurísticas y recursividad; análisis teórico y experimental de complejidad; registros
+y resultados de pruebas; demostración en vivo y sustentación.
+9 / Evaluación propuesta
+Criterio
+Peso
+Arquitectura de agentes inteligentes
+25 %
+Implementación de algoritmos
+25 %
+Autonomía y adaptación
+20 %
+Complejidad y rendimiento
+15 %
+Funcionalidad y experiencia de juego
+5 %
+Sustentación y documentación
+10 %
+Total
+100 %
+Las ponderaciones y el alcance mínimo son ajustables por el docente.
