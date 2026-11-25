@@ -297,6 +297,38 @@ class App:
         elif key == pygame.K_n:
             self._restart(new_seed=True)
 
+    def _talk_to_operator(self) -> None:
+        game = self.game
+        if game is None or game.operator is None:
+            if game is not None:
+                game.log_event("SISTEMA", "Operador no disponible (LLM deshabilitado)", "info")
+            return
+        if game.state != "playing":
+            return
+        
+        game.log_event("SISTEMA", "Invocando Operador...", "info")
+        game.add_text(game.player.tile, "⟳ Pensando...", config.COL_CYAN, 2.0)
+        
+        # Llamada síncrona directa (bloquea brevemente pero evita problemas de hilos)
+        try:
+            context = game.operator.build_context(game, trigger="manual")
+            response = game.operator.think_sync(context)
+            
+            from .llm_agents import LLMActionValidator
+            validator = LLMActionValidator(game)
+            events = game.operator.process_response(game, response, validator)
+            for ev in events:
+                if ev["type"] == "dialogue":
+                    game.log_event("OPERADOR", ev["text"], "llm")
+                    game.add_text(game.player.tile, ev["text"][:40], config.COL_CYAN, 2.0)
+                elif ev["type"] == "tool_validated":
+                    game.log_event("OPERADOR", f"Sugerencia: {ev['tool']} {ev.get('args', {})}", "llm")
+                elif ev["type"] == "action_executed":
+                    game.log_event("OPERADOR", f"Ejecutado: {ev['action']}", "llm")
+        except Exception as exc:
+            game.log_event("OPERADOR", f"Error LLM: {exc}", "error")
+            game.add_text(game.player.tile, "✗ Error", config.COL_RED, 1.0)
+
     def _toggle_fullscreen(self) -> None:
         if not self._fullscreen:
             self._windowed_size = self.screen.get_size()
